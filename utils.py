@@ -43,7 +43,7 @@ def set_loader(opt):
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(size=224, scale=(0.2, 1.)),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomVerticalFlip(),  # Add vertical flip
+        #transforms.RandomVerticalFlip(),  # Add vertical flip
 
          # Add horizontal and vertical translations within 25% of image size
         transforms.RandomAffine(degrees=0, translate=(0.25, 0.25), scale=None), 
