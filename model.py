@@ -13,6 +13,9 @@ class ResNet(nn.Module):
             self.encoder.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
             self.encoder.fc = nn.Identity()
             self.fc = nn.Linear(2048, num_classes)
+        elif name=='unet':
+            self.encoder = UNet(in_channels=1, out_channels=num_classes)
+            self.fc = nn.Identity()
         else:
             self.encoder = torchvision.models.vgg19(zero_init_residual=True)
             self.encoder.features[0] = nn.Conv2d(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
