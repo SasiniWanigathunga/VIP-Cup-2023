@@ -43,6 +43,11 @@ class ResNet(nn.Module):
             self.encoder.features.conv0 = nn.Conv2d(1, 96, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
             self.encoder.classifier = nn.Identity()
             self.fc = nn.Linear(2208, num_classes)
+        elif name=='densenet121':
+            self.encoder = torchvision.models.densenet121(pretrained=True)
+            self.encoder.features.conv0 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+            self.encoder.classifier = nn.Identity()
+            self.fc = nn.Linear(1024, num_classes)
         elif name=='unet':
             self.encoder = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=num_classes, init_features=32, pretrained=True)
             #self.encoder = UNet(in_channels=1, out_channels=num_classes)
