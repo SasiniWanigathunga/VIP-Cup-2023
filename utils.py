@@ -46,10 +46,10 @@ def set_loader(opt):
         #transforms.RandomVerticalFlip(),  # Add vertical flip
 
          # Add horizontal and vertical translations within 25% of image size
-        transforms.RandomAffine(degrees=0, translate=(0.25, 0.25), scale=None), 
+        #transforms.RandomAffine(degrees=0, translate=(0.25, 0.25), scale=None), 
        
         # Add zoom up to 50%
-        transforms.RandomAffine(degrees=0, translate=None, scale=(1.0, 1.5)),
+        #transforms.RandomAffine(degrees=0, translate=None, scale=(1.0, 1.5)),
 
         transforms.RandomApply([
             transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)
