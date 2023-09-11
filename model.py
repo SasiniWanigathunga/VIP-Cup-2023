@@ -55,10 +55,40 @@ class ResNet(nn.Module):
             self.encoder.features.conv0 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
             self.encoder.classifier = nn.Identity()
             self.fc = nn.Linear(1024, num_classes)
-        elif name=='unet':
-            self.encoder = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=num_classes, init_features=32, pretrained=True)
-            #self.encoder = UNet(in_channels=1, out_channels=num_classes)
-            self.fc = nn.Identity()
+        elif name == 'unet':
+            self.encoder = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=1, init_features=32, pretrained=True)
+            self.encoder.fc = nn.Identity()  # Remove the fully connected layer from the encoder
+    
+            # Create the XGBoost classifier
+            self.xgb_classifier = xgb.XGBClassifier(
+                n_estimators=100,
+                max_depth=3,
+                learning_rate=0.001,
+                objective='multi:softmax',  # Adjust for your problem type
+                num_class=6,  # Number of classes in your problem
+                random_state=42
+            )
+            #self.fc = nn.Linear(224, num_classes)
+            #self.encoder = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=1, init_features=32, pretrained=True)
+            #self.encoder.fc =  nn.AdaptiveAvgPool2d(output_size=(1,1))
+            #self.fc =  nn.Flatten()
+            self.fc = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(50176, 128),
+                nn.Sigmoid(),
+                #nn.ReLU(),
+                nn.Linear(128, 6)
+                #nn.Sigmoid()
+            )
+                #nn.Flatten(),  # Flatten the 2D feature map
+                #nn.Linear(50176, 224), 
+                #nn.BatchNorm1d(224),# Linear layer with input size 50176 and output size 128
+                #nn.ReLU(),
+                ##nn.Dropout(0.5),# Apply ReLU activation
+                #nn.Linear(224, 224),
+                #nn.BatchNorm1d(224),
+                #nn.Linear(224, 6),
+                #nn.Sigmoid()# Linear layer with input size 128 and output size 6
         else:
             self.encoder = torchvision.models.resnet152(pretrained=True)
             self.encoder.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
